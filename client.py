@@ -1,8 +1,10 @@
 import pygame
-from tabuleiro import *
+from gekitai import *
 
 # Inicializando módulos de Pygame
 pygame.init()
+
+grade = Tabuleiro()
 
 # Criando uma janela
 janela = pygame.display.set_mode((LARGURAJANELA, ALTURAJANELA))
@@ -43,7 +45,7 @@ def receive_data():
             turn = True
         if data[3] == 'False':
             fimdeJogo = True
-        jogar('1', (x, y), matrizTabuleiro)
+        grade.jogar('1', (x, y))
         print(data)
 
 create_thread(receive_data)
@@ -73,17 +75,17 @@ while deve_continuar:
 
                         x, y = getCoordenadas(evento.pos[0], evento.pos[1])
                         
-                        if not matrizTabuleiro[y][x]:
+                        if not grade.matrizTabuleiro[y][x]:
 
                             send_data = '{}-{}-{}-{}'.format(x, y, 'yourturn', playing).encode()
                             sock.send(send_data)
 
-                            jogar(player, (x, y), matrizTabuleiro)
+                            grade.jogar(player, (x, y))
                             turn = False
 
         if evento.type == pygame.KEYDOWN:
             if evento.key == pygame.K_BACKSPACE and fimdeJogo:
-                iniciarJogo()
+                grade.iniciarJogo()
                 fimdeJogo = False
                 playing = 'True'
             elif evento.key == pygame.K_BACKSPACE:
@@ -97,11 +99,11 @@ while deve_continuar:
     janela.blit(tabuleiro, (TABULEIROORIGEM))
 
     for peca in pecasJogador1:
-        janela.blit(peca['peca'], peca['pos'])
+        janela.blit(peca.imagem, peca.pos)
     for peca in pecasJogador2:
-        janela.blit(peca['peca'], peca['pos'])
+        janela.blit(peca.imagem, peca.pos)
 
-    fimdeJogo = verificarJogada(matrizTabuleiro, janela)
+    fimdeJogo = grade.verificarJogada(janela)
     if fimdeJogo:
         playing = 'False'
 
