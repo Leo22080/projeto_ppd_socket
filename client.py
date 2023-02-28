@@ -4,6 +4,10 @@ from gekitai import *
 # Inicializando módulos de Pygame
 pygame.init()
 
+
+# configurando o som
+somGanhar = pygame.mixer.Sound(os.path.join('sounds','tada.wav'))
+
 grade = Tabuleiro()
 
 # Criando uma janela
@@ -39,14 +43,19 @@ def receive_data():
     global turn
     while True:
         data = sock.recv(1024).decode()
-        data = data.split('-')
-        x, y = int(data[0]), int(data[1])
-        if data[2] == 'yourturn':
-            turn = True
-        if data[3] == 'False':
-            fimdeJogo = True
-        grade.jogar('1', (x, y))
-        print(data)
+        if data == 'iniciar':
+                grade.iniciarJogo()
+                fimdeJogo = False
+                playing = 'True'
+        else:
+            data = data.split('-')
+            x, y = int(data[0]), int(data[1])
+            if data[2] == 'yourturn':
+                turn = True
+            if data[3] == 'False':
+                fimdeJogo = True
+            grade.jogar('1', (x, y))
+            print(data)
 
 create_thread(receive_data)
 
@@ -84,12 +93,11 @@ while deve_continuar:
                             turn = False
 
         if evento.type == pygame.KEYDOWN:
-            if evento.key == pygame.K_BACKSPACE and fimdeJogo:
+            if evento.key == pygame.K_ESCAPE and fimdeJogo:
                 grade.iniciarJogo()
                 fimdeJogo = False
                 playing = 'True'
-            elif evento.key == pygame.K_BACKSPACE:
-                deve_continuar = False
+                sock.send('iniciar'.encode())
 
     # Preenchendo o fundo da janela com uma cor
     janela.fill((192, 192, 192))
@@ -100,11 +108,13 @@ while deve_continuar:
 
     for peca in pecasJogador1:
         janela.blit(peca.imagem, peca.pos)
+        peca.atualizar()
     for peca in pecasJogador2:
         janela.blit(peca.imagem, peca.pos)
-
+        peca.atualizar()
+        
     fimdeJogo = grade.verificarJogada(janela)
-    if fimdeJogo:
+    if fimdeJogo:   
         playing = 'False'
 
     # mostrando na tela tudo o que foi desenhado

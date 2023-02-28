@@ -1,9 +1,9 @@
-import pygame, os
+import pygame, os, turtle
 
 titulo = pygame.image.load(os.path.join('imgs', 'titulo.png'))
 tabuleiro = pygame.image.load(os.path.join('imgs', 'tabuleiro.png'))
 
-# definindo outras constantes do jogo
+# definindo constantes do jogo
 LARGURAJANELA = 800
 ALTURAJANELA = 600
 LARGURATITULO = titulo.get_width()
@@ -11,6 +11,7 @@ ALTURATITULO = titulo.get_height()
 LARGURATABULEIRO = tabuleiro.get_width()
 ALTURATABULEIRO = tabuleiro.get_height()
 TABULEIROORIGEM = (int((LARGURAJANELA - LARGURATABULEIRO) / 2), ALTURATITULO + 25)
+
 
 posJogador1 = {}
 posJogador2 = {}
@@ -40,29 +41,29 @@ class Peca:
         self.livre = True
         self.base = pos
         self.player = player
+        self.direcao = (0, 0)
+        self.emMovimento = False
+        self.passo = 0
 
-    # Funcão para mover a peça
-    def mover(self, origem, destino, matriz):
-        """
-        Caso as coordenadas do destino esteja no tabuleiro e não exista um peça la
-        move-se a peca para o destino
-        caso as coordenadas do destino esteja fora do tabuleiro
-        move-se a peça para sua base
-        """
+    def deslocar(self, direcao):
+        self.emMovimento = True
+        self.direcao = direcao
+        print(direcao, self.direcao)
 
-        x = destino[0]
-        y = destino[1]
-        if (0 <= x <= 5) and (0 <= y <= 5):
-            peca2 = matriz[y][x]
-            if not peca2:
-                matriz[origem[1]][origem[0]] = None
-                matriz[destino[1]][destino[0]] = self
-                self.pos = posTabuleiro[destino]
-
-        else:
-            matriz[origem[1]][origem[0]] = None
-            self.pos = self.base
-            self.livre = True
+    def atualizar(self):
+        vel = 10
+        if self.emMovimento:
+            x = self.pos[0]
+            y = self.pos[1]
+            x += self.direcao[0]*vel
+            y += self.direcao[1]*vel
+            self.pos = (x, y)
+            self.passo += 1*vel
+            if self.passo >= 80:
+                self.emMovimento = False
+                self.passo = 0
+     
+        
 
 
 pecasJogador1 = [Peca('imgs', 'pecabranca.png', pos, '1') for pos in posJogador1.values()]
@@ -102,6 +103,33 @@ class Tabuleiro:
         self.matrizTabuleiro[coor[1]][coor[0]] = peca
         self.empurrar(coor)
 
+
+    # Funcão para mover a peça
+    def mover(self, peca, origem, destino, direcao):
+        """
+        Caso as coordenadas do destino esteja no tabuleiro e não exista um peça la
+        move-se a peca para o destino
+        caso as coordenadas do destino esteja fora do tabuleiro
+        move-se a peça para sua base
+        """
+
+        matriz = self.matrizTabuleiro
+
+        x = destino[0]
+        y = destino[1]
+        if (0 <= x <= 5) and (0 <= y <= 5):
+            peca2 = matriz[y][x]
+            if not peca2:
+                matriz[origem[1]][origem[0]] = None
+                matriz[destino[1]][destino[0]] = peca
+                peca.deslocar(direcao)
+   
+        else:
+            matriz[origem[1]][origem[0]] = None
+            peca.pos = peca.base
+            peca.livre = True
+            
+
     # Funçao empurrar as peças:
     def empurrar(self, coor):
         """
@@ -125,10 +153,10 @@ class Tabuleiro:
                     break
 
             if peca:
-                movimentos.append((peca, (x - i, y - j), (x, y)))
+                movimentos.append((peca, (x - i, y - j), (x, y), (i, j)))
 
-        for peca, origem, destino in movimentos:
-            peca.mover(origem, destino, self.matrizTabuleiro)
+        for peca, origem, destino, direcao in movimentos:
+            self.mover(peca, origem, destino, direcao)
 
 
     def verificarJogada(self, surface):
@@ -137,12 +165,13 @@ class Tabuleiro:
         for linha in range(len(matriz)):
             for peca in matriz[linha]:
                 if peca:
-                    coor = getCoordenadas(peca.pos[0], peca.pos[1])
-                    player = peca.player
+                    if not peca.emMovimento:
+                        coor = getCoordenadas(peca.pos[0], peca.pos[1])
+                        player = peca.player
 
-                    for i, j in [(0, -1), (1, -1), (1, 0), (1, 1)]:
-                        if self.marcarJogada(surface, coor, player, (i, j)):
-                            return True
+                        for i, j in [(0, -1), (1, -1), (1, 0), (1, 1)]:
+                            if self.marcarJogada(surface, coor, player, (i, j)):
+                                return True
                         
         return self.marcarTodos(surface)
 
