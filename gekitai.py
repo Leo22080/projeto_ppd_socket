@@ -26,6 +26,50 @@ for i in range(6):
     for j in range(6):
         posTabuleiro[(i, j)] = (TABULEIROORIGEM[0] + i * 80, TABULEIROORIGEM[1] + j * 80)
 
+class Linha:
+    def __init__(self, h, pos='meio', tam=24):
+       self.font = pygame.font.Font(None, tam)
+       self.msg = ''
+       if pos == 'meio':
+           self.caixa = pygame.Rect(105, h, 590, 35)
+           self.cor = (255, 255, 255)
+       elif pos == 'esq':
+           self.caixa = pygame.Rect(295, h, 400, 35)
+           self.cor = pygame.Color('lightskyblue3')
+       elif pos == 'dir':
+           self.caixa = pygame.Rect(105, h, 400, 35)
+           self.cor = pygame.Color('chartreuse4')
+
+    def drawLinha(self, surface):
+        pygame.draw.rect(surface, self.cor, self.caixa, 0, 5)
+        text_surface = self.font.render(self.msg, True, (0, 0, 0))
+        surface.blit(text_surface, (self.caixa.x+5, self.caixa.y+5))
+
+
+class Chat:
+    def __init__(self):
+        self.linhas = []
+        self.linhaMestra = Linha(545, 'meio', tam=36)
+        
+
+    def drawChat(self, surface):
+        pygame.draw.rect(surface,(46, 46, 46), (100, 300, 600, 290), 0, 5)
+        self.linhaMestra.drawLinha(surface)
+        for linha in self.linhas:
+            linha.drawLinha(surface)
+
+    def escrever(self, msg, pos):
+        novaLinha = Linha(490, pos)
+        novaLinha.msg = msg
+        
+        for linha in self.linhas:
+            linha.caixa.h -= 95
+
+        self.linhas.append(novaLinha)
+
+        if len(self.linhas) > 5:
+            self.linhas.pop(0)
+          
 
 # Funçao que retorna as coordenadas x, y em relaçao ao tabuleiro
 def getCoordenadas(posX, poxY):
@@ -62,9 +106,9 @@ class Peca:
             if self.passo >= 80:
                 self.emMovimento = False
                 self.passo = 0
+            vel -= 1
      
         
-
 
 pecasJogador1 = [Peca('imgs', 'pecabranca.png', pos, '1') for pos in posJogador1.values()]
 pecasJogador2 = [Peca('imgs', 'pecapreta.png', pos, '2') for pos in posJogador2.values()]

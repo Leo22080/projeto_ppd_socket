@@ -4,10 +4,6 @@ from gekitai import *
 # Inicializando módulos de Pygame
 pygame.init()
 
-
-# configurando o som
-somGanhar = pygame.mixer.Sound(os.path.join('sounds','tada.wav'))
-
 grade = Tabuleiro()
 
 # Criando uma janela
@@ -25,7 +21,7 @@ def create_thread(target):
 import socket
 
 HOST = '127.0.0.1'
-PORT = 50000
+PORT = 51000
 
 ADDR = (HOST,PORT)
 connection_established = False
@@ -40,13 +36,17 @@ except socket.error as e:
     print(str(e))
 '''
 def receive_data():
-    global turn
+    global turn, chatOn, msg
     while True:
         data = sock.recv(1024).decode()
         if data == 'iniciar':
                 grade.iniciarJogo()
                 fimdeJogo = False
                 playing = 'True'
+        elif data == 'chat':
+            chatOn = not chatOn
+        elif chatOn:
+            chat.escrever(data, 'dir')
         else:
             data = data.split('-')
             x, y = int(data[0]), int(data[1])
@@ -59,9 +59,13 @@ def receive_data():
 
 create_thread(receive_data)
 
+#Definição do chat
+chat = Chat()
+
 player = '2'
 turn = False
 playing = 'True'
+chatOn = False
 
 deve_continuar = True
 fimdeJogo = False
@@ -78,7 +82,7 @@ while deve_continuar:
         # quando o botao esquerdo do mouse é pressionado
         if evento.type == pygame.MOUSEBUTTONDOWN and not fimdeJogo:
             if pygame.mouse.get_pressed()[0]:
-                if turn and not fimdeJogo:
+                if turn and not fimdeJogo and not chatOn:
                     rect = tabuleiro.get_rect().move(TABULEIROORIGEM)
                     if rect.collidepoint(pygame.mouse.get_pos()):
 
@@ -92,12 +96,29 @@ while deve_continuar:
                             grade.jogar(player, (x, y))
                             turn = False
 
-        if evento.type == pygame.KEYDOWN:
+        if evento.type == pygame.KEYDOWN
             if evento.key == pygame.K_ESCAPE and fimdeJogo:
                 grade.iniciarJogo()
                 fimdeJogo = False
                 playing = 'True'
                 sock.send('iniciar'.encode())
+                
+            if evento.key == pygame.K_F12:
+                chatOn = not chatOn
+                sock.send('chat'.encode())
+
+            if chatOn:
+                if evento.key == pygame.K_BACKSPACE:
+                    chat.linhaMestra.msg = chat.linhaMestra.msg[:-1]
+                elif evento.key == pygame.K_RETURN and not chat.linhaMestra.msg == '':
+                    try:
+                        sock.send(chat.linhaMestra.msg.encode())
+                        chat.escrever(chat.linhaMestra.msg, 'esq')
+                        chat.linhaMestra.msg = ''
+                    except:
+                        pass
+                else:
+                    chat.linhaMestra.msg += evento.unicode
 
     # Preenchendo o fundo da janela com uma cor
     janela.fill((192, 192, 192))
@@ -116,6 +137,9 @@ while deve_continuar:
     fimdeJogo = grade.verificarJogada(janela)
     if fimdeJogo:   
         playing = 'False'
+
+    if chatOn:
+        chat.drawChat(janela)
 
     # mostrando na tela tudo o que foi desenhado
     pygame.display.update()
