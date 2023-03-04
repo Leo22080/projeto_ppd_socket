@@ -1,5 +1,5 @@
-# Projeto de Sockets
-## 1) Objetivo: Implementar o Jogo *Gekitai* com Sockets
+#  Projeto de Sockets
+## 1) Objetivo: Implementar o Jogo *Gekitai* com  Sockets
 Gekitai, traduzido do Japonês significa repelir, e as peças ao serem colocadas vão repelindo
 ou empurrando outras peças que já estão no tabuleiro. O tabuleiro é quadrado com 6 linhas
 e 6 colunas, ou seja, são 36 casas. Um jogo para dois jogadores e cada um tem 8 peças.
@@ -21,3 +21,8 @@ sair do tabuleiro, a mesma retorna ao jogador.
 - Pygame é uma biblioteca de jogos multiplataforma feita para ser utilizada em conjunto com a linguagem de programação Python
 - Pygame não é uma biblioteca nativa do python precisa ser instalada:   
 `python -m pip install -U pygame`
+- Cada jogador alterna sua vez de jogar onde ele posiciona sua peça no tabuleiro em um espaço vazio quando possui peças
+- O *"empurrar"* é feito de forma altomática.
+- Uma vitória é atingida quando o jogador consegue alinhar três de suas peças em qualquer direção ou quando todas suas peças estão no tabuleiro
+- Após a uma vitória o jogo pode ser reiniciado precionando a tecla ESC por qualquer um dos jogadores
+- A tecla F-12 ativa e desativa o chat
