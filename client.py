@@ -15,7 +15,7 @@ import threading
 
 def create_thread(target):
     thread = threading.Thread(target=target)
-    thread.daemon = True #this makes is so that these thread will auto quit before the code ends running
+    thread.daemon = True
     thread.start()
 
 import socket
@@ -28,17 +28,20 @@ connection_established = False
 conn , addr = None, None
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect(ADDR)
-'''
+#sock.connect(ADDR)
+
+
 try:
-    sock.bind(ADDR)
+    sock.connect(ADDR)
 except socket.error as e:
     print(str(e))
-'''
+
 def receive_data():
     global turn, chatOn, msg
     while True:
         data = sock.recv(1024).decode()
+        if data == 'desistir':
+            break
         if data == 'iniciar':
                 grade.iniciarJogo()
                 fimdeJogo = False
@@ -78,6 +81,10 @@ while deve_continuar:
         # Se for um evento QUIT
         if evento.type == pygame.QUIT:
             deve_continuar = False
+            try:
+                sock.send('desistir'.encode())
+            except:
+                pass
 
         # quando o botao esquerdo do mouse é pressionado
         if evento.type == pygame.MOUSEBUTTONDOWN and not fimdeJogo:
@@ -85,7 +92,7 @@ while deve_continuar:
                 if turn and not fimdeJogo and not chatOn:
                     rect = tabuleiro.get_rect().move(TABULEIROORIGEM)
                     if rect.collidepoint(pygame.mouse.get_pos()):
-
+                        
                         x, y = getCoordenadas(evento.pos[0], evento.pos[1])
                         
                         if not grade.matrizTabuleiro[y][x]:
@@ -96,7 +103,7 @@ while deve_continuar:
                             grade.jogar(player, (x, y))
                             turn = False
 
-        if evento.type == pygame.KEYDOWN
+        if evento.type == pygame.KEYDOWN:
             if evento.key == pygame.K_ESCAPE and fimdeJogo:
                 grade.iniciarJogo()
                 fimdeJogo = False
@@ -119,6 +126,12 @@ while deve_continuar:
                         pass
                 else:
                     chat.linhaMestra.msg += evento.unicode
+
+    '''
+            if evento.key == pygame.K_DELETE:
+                sock.send('desistir'.encode())
+                sock.close()
+    '''
 
     # Preenchendo o fundo da janela com uma cor
     janela.fill((192, 192, 192))

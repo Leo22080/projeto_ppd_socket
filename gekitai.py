@@ -95,7 +95,7 @@ class Peca:
         print(direcao, self.direcao)
 
     def atualizar(self):
-        vel = 10
+        vel = 8
         if self.emMovimento:
             x = self.pos[0]
             y = self.pos[1]
@@ -106,7 +106,8 @@ class Peca:
             if self.passo >= 80:
                 self.emMovimento = False
                 self.passo = 0
-            vel -= 1
+            if vel > 1:
+                vel -= 2
      
         
 

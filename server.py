@@ -17,7 +17,7 @@ import threading
 
 def create_thread(target):
     thread = threading.Thread(target=target)
-    thread.daemon = True #this makes is so that these thread will auto quit before the code ends running
+    thread.daemon = True 
     thread.start()
 
 
@@ -41,7 +41,7 @@ sock.listen(1)
 
 
 def receive_data():
-    global turn, chatOn, msg
+    global turn, chatOn, msg, connection_established
     while True:
         data = conn.recv(1024).decode()
         if data == 'iniciar':
@@ -52,6 +52,17 @@ def receive_data():
             chatOn = not chatOn
         elif chatOn:
             chat.escrever(data, 'dir')
+        elif data == 'desistir':
+            print('Finalizando conexao do cliente')
+            grade.iniciarJogo()
+            fimdeJogo = False
+            turn = True
+            playing = 'True'
+            conn.send('desistir'.encode())
+            conn.close()
+            connection_established = False
+            create_thread(waiting_for_connection)
+            break
         else:
             data = data.split('-')
             x, y = int(data[0]), int(data[1])
@@ -68,7 +79,7 @@ def waiting_for_connection():
 
     print("Waiting for connection....")
     
-    conn , addr = sock.accept() # it will wait for a connection , also blocks any new threads 
+    conn , addr = sock.accept() # espera por uma conexão, e bloqueia qualquer novo thread 
     print("Client is connected!!!")
 
     connection_established = True
