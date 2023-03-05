@@ -22,7 +22,6 @@ import socket
 
 HOST = '127.0.0.1'
 PORT = 51000
-
 ADDR = (HOST,PORT)
 connection_established = False
 conn , addr = None, None
@@ -35,6 +34,8 @@ try:
     sock.connect(ADDR)
 except socket.error as e:
     print(str(e))
+
+print(sock)
 
 def receive_data():
     global turn, chatOn, msg

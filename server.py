@@ -147,7 +147,8 @@ while deve_continuar:
                     except:
                         pass
                 else:
-                    chat.linhaMestra.msg += evento.unicode
+                    if not evento.key == pygame.K_ESCAPE or not evento.key == pygame.K_DELETE:
+                        chat.linhaMestra.msg += evento.unicode
 
     # Preenchendo o fundo da janela com uma cor
     janela.fill((192, 192, 192))

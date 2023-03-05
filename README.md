@@ -21,8 +21,11 @@ sair do tabuleiro, a mesma retorna ao jogador.
 - Pygame é uma biblioteca de jogos multiplataforma feita para ser utilizada em conjunto com a linguagem de programação Python
 - Pygame não é uma biblioteca nativa do python precisa ser instalada:   
 `python -m pip install -U pygame`
-- Cada jogador alterna sua vez de jogar onde ele posiciona sua peça no tabuleiro em um espaço vazio quando possui peças
-- O *"empurrar"* é feito de forma altomática.
+- Cada jogador alterna sua vez de jogar onde ele posiciona sua peça no tabuleiro em um espaço vazio quando possuem peças.
+- O *"empurrar"* é feito de forma altomatica.
+![Empurrar](imgs/empurrar.gif)
 - Uma vitória é atingida quando o jogador consegue alinhar três de suas peças em qualquer direção ou quando todas suas peças estão no tabuleiro
-- Após a uma vitória o jogo pode ser reiniciado precionando a tecla ESC por qualquer um dos jogadores
-- A tecla F-12 ativa e desativa o chat
+- Após a uma vitória o jogo pode ser reiniciado pressionando a tecla ESC por qualquer um dos jogadores.
+- A tecla F12 ativa e desativa o chat.
+- ![Chat](imgs/chat.gif)
+- O jogador cliente ao fechar a janela, o servidor é avisado da desistência e inicia uma nova conexão.
