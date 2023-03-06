@@ -26,6 +26,16 @@ for i in range(6):
     for j in range(6):
         posTabuleiro[(i, j)] = (TABULEIROORIGEM[0] + i * 80, TABULEIROORIGEM[1] + j * 80)
 
+def menu(surface):
+
+    font = pygame.font.Font(pygame.font.get_default_font(), 20)
+    texto = font.render('ESC - Reiniciar', True, (0, 0, 0), (192, 192, 192))
+    surface.blit(texto, [5, 575])
+    font = pygame.font.Font(pygame.font.get_default_font(), 20)
+    texto = font.render('F12 - Chatbox', True, (0, 0, 0), (192, 192, 192))
+    surface.blit(texto, [655, 575])
+
+
 class Linha:
     def __init__(self, h, pos='meio', tam=24):
        self.font = pygame.font.Font(None, tam)

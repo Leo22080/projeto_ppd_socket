@@ -1,4 +1,5 @@
 #  Projeto de Sockets
+![Empurrar](imgs/gekitai.png)
 ## 1) Objetivo: Implementar o Jogo *Gekitai* com  Sockets
 Gekitai, traduzido do Japonês significa repelir, e as peças ao serem colocadas vão repelindo
 ou empurrando outras peças que já estão no tabuleiro. O tabuleiro é quadrado com 6 linhas

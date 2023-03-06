@@ -1,7 +1,6 @@
 import pygame
 from gekitai import *
 
-
 # Inicializando módulos de Pygame
 pygame.init()
 
@@ -156,6 +155,8 @@ while deve_continuar:
     # preenchendo o fundo de janela com a sua imagem    
     janela.blit(titulo, ((LARGURAJANELA - LARGURATITULO) / 2, 0))
     janela.blit(tabuleiro, (TABULEIROORIGEM))
+    menu(janela)
+    
 
     for peca in pecasJogador1:
         janela.blit(peca.imagem, peca.pos)
